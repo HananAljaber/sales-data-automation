@@ -34,6 +34,8 @@
 
 </div>
 
+<div dir="ltr" align="left">
+
 ```python
 # Extract
 
@@ -49,6 +51,8 @@ for file_name in html_files:
 combined_sales_df =pd.concat(sales_dataframes,ignore_index=True)
 ```
 
+</div>
+
 <div dir="rtl" align="right">
 
 **النتيجة:** بعد تشغيل فحص حجم البيانات ظهر `Dataset Shape: (4862, 14)`؛ أي 4,862 سجلًا و14 عمودًا.
@@ -63,6 +67,8 @@ combined_sales_df =pd.concat(sales_dataframes,ignore_index=True)
 
 </div>
 
+<div dir="ltr" align="left">
+
 ```python
 # Number of rows and columns
 print("Dataset Shape:", combined_sales_df.shape)
@@ -74,6 +80,8 @@ print("\nData Types:")
 print(combined_sales_df.dtypes)
 ```
 
+</div>
+
 <div dir="rtl" align="right">
 
 **مخرجات التشغيل:** `Dataset Shape: (4862, 14)`، وظهر عمود `التاريخ` كنص (`str`) وعمود `سعر الوحدة` بنوع (`object`).
@@ -83,6 +91,8 @@ print(combined_sales_df.dtypes)
 كتبتُ دالة تحسب عدد القيم المفقودة ونسبتها في كل عمود، ثم طبّقتها على البيانات المجمّعة.
 
 </div>
+
+<div dir="ltr" align="left">
 
 ```python
 # Missing values per column
@@ -100,15 +110,19 @@ def miising_values_per_columns(data):
 miising_values_per_columns(combined_sales_df)
 ```
 
+</div>
+
 <div dir="rtl" align="right">
 
 **النتيجة قبل التنظيف:** 5 قيم مفقودة في عمود `رمز العميل` (0.103%)، ولم تظهر قيم مفقودة في التواريخ والأسعار قبل اختبار تنسيقهما.
 
-### 2.3 فحص الصفوف المتكررة بالكامل
+### 2.3 فحص الصفوف المكررة
 
-استخدمتُ `duplicated()` لمعرفة ما إذا كانت هناك صفوف متطابقة بالكامل.
+استخدمتُ `duplicated()` للتحقق من وجود صفوف مكررة في البيانات.
 
 </div>
+
+<div dir="ltr" align="left">
 
 ```python
 # Count fully duplicated rows
@@ -122,6 +136,8 @@ duplicate_records_df = combined_sales_df[
 duplicate_records_df
 ```
 
+</div>
+
 <div dir="rtl" align="right">
 
 **مخرجات التشغيل:** `Duplicate Rows: 0`، وظهر جدول فارغ عند عرض السجلات المكررة.
@@ -131,6 +147,8 @@ duplicate_records_df
 جرّبتُ تحويل التواريخ وفق الصيغة المتوقعة **يوم/شهر/سنة**. القيم التي لم يستطع Pandas تفسيرها ظهرت في نتيجة الفحص بوصفها قيمًا غير صالحة لهذا التنسيق، ثم عرضتُ سجلاتها الأصلية.
 
 </div>
+
+<div dir="ltr" align="left">
 
 ```python
 # 1. اكتشاف الصفوف التي تحتوي على تواريخ مختلفة
@@ -146,6 +164,8 @@ invalid_dates_df = combined_sales_df.loc[
 print("عدد التواريخ مختلفة التنسيق:", len(invalid_dates_df))
 invalid_dates_df
 ```
+
+</div>
 
 <div dir="rtl" align="right">
 
@@ -164,6 +184,8 @@ invalid_dates_df
 اختبرتُ إمكانية تحويل `سعر الوحدة` إلى رقم باستخدام `pd.to_numeric()`. ثم عرضتُ الأسعار التي فشل تحويلها مباشرة.
 
 </div>
+
+<div dir="ltr" align="left">
 
 ```python
 # 2. اكتشاف الصفوف التي تحتوي على أسعار غير قابلة للتحويل
@@ -184,6 +206,8 @@ print("عدد الأسعار مختلفة التنسيق:", len(invalid_prices_d
 display(invalid_prices_df)
 ```
 
+</div>
+
 <div dir="rtl" align="right">
 
 **مخرجات التشغيل: عدد الأسعار مختلفة التنسيق: 4**
@@ -203,6 +227,8 @@ display(invalid_prices_df)
 
 </div>
 
+<div dir="ltr" align="left">
+
 ```python
 profiling_sales_df = combined_sales_df.copy()
 
@@ -214,6 +240,8 @@ profiling_sales_df["سعر الوحدة"] = price_check
       
 miising_values_per_columns(profiling_sales_df)
 ```
+
+</div>
 
 <div dir="rtl" align="right">
 
@@ -237,6 +265,8 @@ miising_values_per_columns(profiling_sales_df)
 
 </div>
 
+<div dir="ltr" align="left">
+
 ```python
 
 
@@ -251,6 +281,8 @@ combined_sales_df["التاريخ"] = pd.to_datetime(combined_sales_df["التا
 combined_sales_df.dtypes
 ```
 
+</div>
+
 <div dir="rtl" align="right">
 
 **مخرجات التشغيل:** ظهر نوع `التاريخ` على أنه `datetime64[us]`، ونوع `سعر الوحدة` على أنه `float64`.
@@ -262,6 +294,8 @@ combined_sales_df.dtypes
 **الكود الذي نفذتُه:**
 
 </div>
+
+<div dir="ltr" align="left">
 
 ```python
 mis =combined_sales_df[combined_sales_df["رمز العميل"].isna()]
@@ -294,6 +328,8 @@ for i in mis.index:
 combined_sales_df[combined_sales_df["رمز العميل"].isna()]
 ```
 
+</div>
+
 <div dir="rtl" align="right">
 
 **مخرجات التشغيل:** لم تبقَ سجلات ذات رمز عميل مفقود في الجدول الناتج.
@@ -303,6 +339,8 @@ combined_sales_df[combined_sales_df["رمز العميل"].isna()]
 عدّلتُ اسم `إجمالي السطر` إلى `صافي مبيعات المنتج`، واسم `سعر الوحدة` إلى `سعر بيع الوحدة` ليكون معنى العمودين أوضح.
 
 </div>
+
+<div dir="ltr" align="left">
 
 ```python
 
@@ -315,6 +353,8 @@ combined_sales_df = combined_sales_df.rename(
 combined_sales_df
 ```
 
+</div>
+
 <div dir="rtl" align="right">
 
 ### 3.4 إعادة فحص القيم المفقودة
@@ -323,9 +363,13 @@ combined_sales_df
 
 </div>
 
+<div dir="ltr" align="left">
+
 ```python
 miising_values_per_columns(combined_sales_df)
 ```
+
+</div>
 
 <div dir="rtl" align="right">
 
@@ -338,6 +382,8 @@ miising_values_per_columns(combined_sales_df)
 حسبتُ صافي مبيعات المنتج من الكمية وسعر البيع ونسبة الخصم، وقارنتُه بالقيمة الموجودة في البيانات. كان فحصي يبحث عن الفروق **الأكبر من 0.01 ريال** أو القيم التي فشل حسابها.
 
 </div>
+
+<div dir="ltr" align="left">
 
 ```python
 
@@ -372,6 +418,8 @@ incorrect_sales_df[
 ]
 ```
 
+</div>
+
 <div dir="rtl" align="right">
 
 **مخرجات التشغيل:** `عدد السجلات غير المتطابقة: 0` وفق الشرط الذي استخدمتُه في الكود. لا يعني هذا بالضرورة عدم وجود أي فرق أصغر من ذلك.
@@ -383,6 +431,8 @@ incorrect_sales_df[
 **الكود كما نفذتُه، دون تغيير شروط الفحص:**
 
 </div>
+
+<div dir="ltr" align="left">
 
 ```python
 # 1. الكميات الصفرية أو السالبة
@@ -414,6 +464,8 @@ validation_report = pd.DataFrame([{
 validation_report
 ```
 
+</div>
+
 <div dir="rtl" align="right">
 
 **مخرجات التشغيل:** كانت جميع القيم الخمس **0**.
@@ -426,6 +478,8 @@ validation_report
 
 </div>
 
+<div dir="ltr" align="left">
+
 ```python
 # عرض جميع السجلات التي تشترك في رقم بند
 duplicate_items_df = combined_sales_df.loc[
@@ -435,6 +489,8 @@ duplicate_items_df = combined_sales_df.loc[
 
 duplicate_items_df
 ```
+
+</div>
 
 <div dir="rtl" align="right">
 
@@ -446,10 +502,14 @@ duplicate_items_df
 
 </div>
 
+<div dir="ltr" align="left">
+
 ```python
 
 combined_sales_df.to_excel("data ETL.xlsx", index=False)
 ```
+
+</div>
 
 <div dir="rtl" align="right">
 
@@ -461,14 +521,12 @@ combined_sales_df.to_excel("data ETL.xlsx", index=False)
 |---|---|
 | استخراج وتجميع ملفات HTML | 20 ملفًا |
 | عدد الصفوف والأعمدة | 4,862 × 14 |
-| الصفوف المتطابقة بالكامل | 0 |
+| الصفوف المكررة | 0 |
 | تواريخ بتنسيق مختلف | 3 |
 | أسعار تحتوي على رمز العملة | 4 |
 | رموز عملاء مفقودة | 5 قبل المعالجة، و0 بعدها |
 | اختلافات الحساب أكبر من 0.01 ريال وفق الكود | 0 |
 | مخالفات قواعد الفحص المكتوبة | 0 |
 | الحفظ النهائي | `data ETL.xlsx` |
-
-*هذا التوثيق يستخدم الأكواد الموجودة في دفتر Jupyter كما نُفّذت، حتى لو كان هناك مجال لتحسين أسماء المتغيرات أو ترتيب الخلايا أو شروط بعض الاختبارات؛ لم تُضف أمثلة برمجية جديدة.*
 
 </div>
