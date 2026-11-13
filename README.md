@@ -2,8 +2,6 @@
 
 # أتمتة معالجة بيانات مبيعات متجر ملابس
 
-**اللغة:** العربية | [English](README_EN.md)
-
 **Sales Data Automation | Python · Pandas · HTML · Excel**
 
 | المعلومة | التفاصيل |
