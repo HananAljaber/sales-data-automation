@@ -153,7 +153,7 @@ duplicate_records_df
 <div dir="ltr" align="left">
 
 ```python
-# 1. اكتشاف الصفوف التي تحتوي على تواريخ مختلفة
+# 1. Detect rows with inconsistent date formats
 date_check = pd.to_datetime(
     combined_sales_df["التاريخ"],
     format="%d/%m/%Y",
@@ -190,15 +190,15 @@ invalid_dates_df
 <div dir="ltr" align="left">
 
 ```python
-# 2. اكتشاف الصفوف التي تحتوي على أسعار غير قابلة للتحويل
+# 2. Detect rows with non-convertible prices
 
-# محاولة تحويل سعر الوحدة إلى رقم
+# Try converting unit price to numeric
 price_check = pd.to_numeric(
     combined_sales_df["سعر الوحدة"],
     errors="coerce"
 )
 
-# استخراج الصفوف التي فشل تحويل سعرها
+# Extract rows whose price failed conversion
 invalid_prices_df = combined_sales_df.loc[
     price_check.isna(),
     ["رقم البند", "سعر الوحدة"]
@@ -234,10 +234,10 @@ display(invalid_prices_df)
 ```python
 profiling_sales_df = combined_sales_df.copy()
 
-# إضافة نتائج اختبار التواريخ
+# Add date-test results
 profiling_sales_df["التاريخ"] = date_check
 
-# إضافة نتائج اختبار الأسعار
+# Add price-test results
 profiling_sales_df["سعر الوحدة"] = price_check
       
 miising_values_per_columns(profiling_sales_df)
@@ -301,13 +301,13 @@ combined_sales_df.dtypes
 mis =combined_sales_df[combined_sales_df["رمز العميل"].isna()]
 
 
-# الفواتير التي ينقصها رمز العميل
+# Invoices missing a customer ID
 missing_invoices = combined_sales_df.loc[
     combined_sales_df["رمز العميل"].isna(),
     "رقم الفاتورة"
 ].unique()
 
-# # عرض جميع بنود هذه الفواتير
+# # Display all line items of these invoices
 invoice_check_df = combined_sales_df.loc[
     combined_sales_df["رقم الفاتورة"].isin(missing_invoices),
     ["رقم الفاتورة", "رقم البند", "رمز العميل"]
@@ -433,20 +433,20 @@ incorrect_sales_df[
 <div dir="ltr" align="left">
 
 ```python
-# 1. الكميات الصفرية أو السالبة
+# 1. Zero or negative quantities
 
 invalid_quantity =(combined_sales_df["الكمية"] <= 0).sum()
-# 2. الأسعار الصفرية أو السالبة
+# 2. Zero or negative prices
 
 invalid_price = (combined_sales_df["سعر بيع الوحدة"] <0).sum()
-# 3. الخصومات السالبة
+# 3. Negative discounts
 
 negative_discount=     (combined_sales_df["الخصم %"] <0).sum()
-# 4. الخصومات الأكبر من 100%
+# 4. Discounts above 100%
 
 high_discount =     (combined_sales_df["الخصم %"] >100).sum()
 
-# عدد أرقام البنود المكررة
+# Count of duplicate line-item IDs
 duplicate_item_count = (
     combined_sales_df["رقم البند"].duplicated().sum()
 )
@@ -479,7 +479,7 @@ validation_report
 <div dir="ltr" align="left">
 
 ```python
-# عرض جميع السجلات التي تشترك في رقم بند
+# Display all records sharing the same line-item ID
 duplicate_items_df = combined_sales_df.loc[
     combined_sales_df["رقم البند"].duplicated(keep=False),
     ["رقم الفاتورة", "رقم البند", "اسم المنتج", "الفرع"]
@@ -663,7 +663,7 @@ I tried to interpret every date using the expected **day/month/year** format. Da
 <div dir="ltr" align="left">
 
 ```python
-# 1. اكتشاف الصفوف التي تحتوي على تواريخ مختلفة
+# 1. Detect rows with inconsistent date formats
 date_check = pd.to_datetime(
     combined_sales_df["التاريخ"],
     format="%d/%m/%Y",
@@ -696,15 +696,15 @@ I tested whether `سعر الوحدة` (unit price) could be converted directly 
 <div dir="ltr" align="left">
 
 ```python
-# 2. اكتشاف الصفوف التي تحتوي على أسعار غير قابلة للتحويل
+# 2. Detect rows with non-convertible prices
 
-# محاولة تحويل سعر الوحدة إلى رقم
+# Try converting unit price to numeric
 price_check = pd.to_numeric(
     combined_sales_df["سعر الوحدة"],
     errors="coerce"
 )
 
-# استخراج الصفوف التي فشل تحويل سعرها
+# Extract rows whose price failed conversion
 invalid_prices_df = combined_sales_df.loc[
     price_check.isna(),
     ["رقم البند", "سعر الوحدة"]
@@ -736,10 +736,10 @@ I created a temporary copy of the dataset, inserted the date and price test resu
 ```python
 profiling_sales_df = combined_sales_df.copy()
 
-# إضافة نتائج اختبار التواريخ
+# Add date-test results
 profiling_sales_df["التاريخ"] = date_check
 
-# إضافة نتائج اختبار الأسعار
+# Add price-test results
 profiling_sales_df["سعر الوحدة"] = price_check
       
 miising_values_per_columns(profiling_sales_df)
@@ -795,13 +795,13 @@ I identified invoices with a missing customer ID, searched their other line item
 mis =combined_sales_df[combined_sales_df["رمز العميل"].isna()]
 
 
-# الفواتير التي ينقصها رمز العميل
+# Invoices missing a customer ID
 missing_invoices = combined_sales_df.loc[
     combined_sales_df["رمز العميل"].isna(),
     "رقم الفاتورة"
 ].unique()
 
-# # عرض جميع بنود هذه الفواتير
+# # Display all line items of these invoices
 invoice_check_df = combined_sales_df.loc[
     combined_sales_df["رقم الفاتورة"].isin(missing_invoices),
     ["رقم الفاتورة", "رقم البند", "رمز العميل"]
@@ -911,20 +911,20 @@ I checked for non-positive quantities, negative selling prices, negative discoun
 <div dir="ltr" align="left">
 
 ```python
-# 1. الكميات الصفرية أو السالبة
+# 1. Zero or negative quantities
 
 invalid_quantity =(combined_sales_df["الكمية"] <= 0).sum()
-# 2. الأسعار الصفرية أو السالبة
+# 2. Zero or negative prices
 
 invalid_price = (combined_sales_df["سعر بيع الوحدة"] <0).sum()
-# 3. الخصومات السالبة
+# 3. Negative discounts
 
 negative_discount=     (combined_sales_df["الخصم %"] <0).sum()
-# 4. الخصومات الأكبر من 100%
+# 4. Discounts above 100%
 
 high_discount =     (combined_sales_df["الخصم %"] >100).sum()
 
-# عدد أرقام البنود المكررة
+# Count of duplicate line-item IDs
 duplicate_item_count = (
     combined_sales_df["رقم البند"].duplicated().sum()
 )
@@ -953,7 +953,7 @@ I displayed all records that shared a line-item ID, if any.
 <div dir="ltr" align="left">
 
 ```python
-# عرض جميع السجلات التي تشترك في رقم بند
+# Display all records sharing the same line-item ID
 duplicate_items_df = combined_sales_df.loc[
     combined_sales_df["رقم البند"].duplicated(keep=False),
     ["رقم الفاتورة", "رقم البند", "اسم المنتج", "الفرع"]
