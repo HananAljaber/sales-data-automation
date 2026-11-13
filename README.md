@@ -2,523 +2,473 @@
 
 # أتمتة معالجة بيانات مبيعات متجر ملابس
 
-**Sales Data Automation | Python • Pandas • HTML • Excel**
+**Sales Data Automation | Python · Pandas · HTML · Excel**
 
-| معلومات المشروع | التفاصيل |
+| المعلومة | التفاصيل |
 |---|---|
 | **تاريخ تنفيذ المشروع** | **12–13 نوفمبر 2026** |
-| **الفترة التي تغطيها بيانات المبيعات** | **1 يناير 2025 – 30 يونيو 2026** (18 شهرًا) |
-| **مصدر البيانات** | 20 ملف HTML |
-| **عدد السجلات بعد التجميع** | 4,862 سجلًا |
-| **عدد الأعمدة** | 14 عمودًا |
+| **الفترة التي تغطيها المبيعات** | من يناير 2025 إلى يونيو 2026 (18 شهرًا) |
+| **ملفات المصدر** | 20 ملف HTML |
+| **البيانات بعد التجميع** | 4,862 صفًا و14 عمودًا |
 | **الأدوات المستخدمة** | Python، Pandas، Jupyter Notebook، Excel |
-| **العمل المنفّذ** | استخراج البيانات، فحصها، تنظيفها، التحقق من جودتها، وتصديرها إلى Excel |
 
 ## فكرة المشروع
 
-توجد بيانات مبيعات متجر ملابس داخل **20 ملف HTML**، تغطي فترة **سنة ونصف**. بدلًا من فتح كل ملف على حدة ونسخ بياناته يدويًا، استخدمتُ **Python** ومكتبة **Pandas** لقراءة الملفات وتجميعها في جدول واحد.
+كانت بيانات مبيعات متجر ملابس موزّعة على 20 ملف HTML. استخدمتُ Python ومكتبة Pandas لقراءة الملفات وتجميع بياناتها في جدول واحد، ثم فحصتُ البيانات وعالجتُ المشكلات التي ظهرت قبل حفظ النتيجة في Excel.
 
-بعد جمع البيانات، فحصتُ الأعمدة واكتشفتُ ثلاث مشكلات:
-
-<ul dir="rtl" align="right">
-  <li><strong>التواريخ:</strong> وجدتُ 3 سجلات بتنسيق تاريخ مختلف عن بقية البيانات.</li>
-  <li><strong>الأسعار:</strong> وجدتُ 4 سجلات يحتوي فيها سعر الوحدة على رمز العملة «ر.س» مع الرقم.</li>
-  <li><strong>رموز العملاء:</strong> وجدتُ 5 سجلات ينقصها رمز العميل.</li>
-</ul>
-
-عالجتُ هذه المشكلات، ثم تحققتُ من النتائج قبل تصدير البيانات إلى **Excel**.
-
-**النتيجة:** جدول موحّد يضم **4,862 سجل مبيعات** بدلًا من التعامل مع 20 تقريرًا منفصلًا.
-
-## كيف نُفّذ المشروع؟
-
-اتبعتُ مراحل **ETL**:
+خلال الفحص اكتشفتُ:
 
 <ul dir="rtl" align="right">
-  <li><strong>Extract — استخراج:</strong> قراءة جداول المبيعات من ملفات HTML ودمجها.</li>
-  <li><strong>Transform — تحويل وتنظيف:</strong> توحيد التواريخ والأسعار، ومعالجة رموز العملاء المفقودة، وتحسين أسماء الأعمدة.</li>
-  <li><strong>Load — تحميل:</strong> تصدير البيانات المعالجة إلى ملف Excel.</li>
+<li><strong>3 تواريخ</strong> مكتوبة بتنسيق مختلف عن بقية التواريخ.</li>
+<li><strong>4 أسعار</strong> تحتوي على رمز العملة «ر.س» داخل الخلية.</li>
+<li><strong>5 رموز عملاء</strong> مفقودة، وتم العثور عليها في بنود أخرى من الفواتير نفسها.</li>
 </ul>
 
-وأضفتُ فحص جودة البيانات **Data Profiling** قبل التنظيف، والتحقق من النتائج **Data Validation** بعده؛ حتى أتعرف على المشكلة قبل تعديلها وأتأكد من حلّها بعد التعديل.
+فيما يلي الخطوات والأكواد **كما كتبتُها في دفتر Jupyter**، مع نتائج التشغيل التي ظهرت فيه. لم تُستبدل الأكواد بأمثلة جديدة.
 
----
+## 01 — Extract | استخراج البيانات وتجميعها
 
-## 01 — Extract | استخراج وتجميع بيانات المبيعات
+قرأتُ ملفات HTML باستخدام حلقة `for`، ووضعتُ الجداول المستخرجة في قائمة، ثم جمعتُها باستخدام `pd.concat()`.
 
-كان مصدر البيانات مجلدًا يحتوي على **20 ملف HTML**. جميع الملفات تعرض نفس أعمدة المبيعات، لكن سجلاتها موزعة على أشهر مختلفة؛ بعض الأشهر مقسّمة إلى ملفين.
-
-استخدمتُ حلقة `for` لقراءة كل ملف بدل كتابة أمر منفصل لكل ملف، ثم `pd.concat()` لجمع الجداول فوق بعضها في DataFrame واحد.
+**الكود الذي استخدمتُه:**
 
 </div>
 
-<div dir="ltr" align="left">
-<pre dir="ltr"><code class="language-python">from pathlib import Path
-import pandas as pd
+```python
+# Extract
 
-# المجلد الذي يحتوي على ملفات المبيعات
-html_folder_path = Path("HTML_Files")
+html_files =os.listdir("C:\\Users\\hanan\\Downloads\\HTML_Files")
+sales_dataframes=[]
+for file_name in html_files:
+    if file_name.lower().endswith(".html"):
+        sales_df=pd.read_html(file_name)[0]
 
-# اختيار ملفات HTML فقط وترتيب أسمائها
-html_files = sorted(html_folder_path.glob("*.html"))
+        sales_dataframes.append(sales_df)
 
-# قائمة للاحتفاظ بالجداول المستخرجة
-sales_dataframes = []
-
-for file_path in html_files:
-    # قراءة الجدول الأول من كل صفحة HTML
-    sales_df = pd.read_html(str(file_path), encoding="utf-8")[0]
-    sales_dataframes.append(sales_df)
-
-# جمع جميع الصفوف في جدول واحد
-combined_sales_df = pd.concat(
-    sales_dataframes,
-    ignore_index=True
-)
-
-print("عدد الملفات:", len(html_files))
-print("حجم البيانات:", combined_sales_df.shape)</code></pre>
-</div>
+# load data
+combined_sales_df =pd.concat(sales_dataframes,ignore_index=True)
+```
 
 <div dir="rtl" align="right">
 
-**مخرجات التشغيل:**
+**النتيجة:** بعد تشغيل فحص حجم البيانات ظهر `Dataset Shape: (4862, 14)`؛ أي 4,862 سجلًا و14 عمودًا.
 
-- عدد الملفات: **20**
-- حجم البيانات: **4,862 صفًا × 14 عمودًا**
+**ملاحظة تشغيل:** مسار `C:\Users\hanan\Downloads\HTML_Files` ومسار قراءة الملف باسمه وحده هما كما استُخدما في دفتر العمل المحلي. لم أغيّرهما هنا إلى كود آخر.
+
+## 02 — Data Profiling | فحص جودة البيانات
+
+### 2.1 حجم البيانات وأسماء الأعمدة وأنواعها
+
+فحصتُ عدد الصفوف والأعمدة وأسماءها وأنواعها قبل تعديل البيانات.
 
 </div>
+
+```python
+# Number of rows and columns
+print("Dataset Shape:", combined_sales_df.shape)
+# Column names
+print("\nColumn Names:")
+print(combined_sales_df.columns.tolist())
+# Data types
+print("\nData Types:")
+print(combined_sales_df.dtypes)
+```
 
 <div dir="rtl" align="right">
 
-**النتيجة:** قراءة **20 ملفًا** وتجميع **4,862 صفًا و14 عمودًا**. الخيار `ignore_index=True` يعيد ترقيم صفوف الجدول بعد الدمج؛ ولا يكرّر رؤوس الأعمدة داخل البيانات.
+**مخرجات التشغيل:** `Dataset Shape: (4862, 14)`، وظهر عمود `التاريخ` كنص (`str`) وعمود `سعر الوحدة` بنوع (`object`).
 
-### ماذا تعني الأعمدة؟
+### 2.2 فحص القيم المفقودة
 
-| اسم العمود في الملفات | معناه |
-|---|---|
-| التاريخ | تاريخ البيع |
-| رقم الفاتورة | رقم الفاتورة؛ قد يظهر في أكثر من صف إذا كانت تحتوي عدة منتجات |
-| رقم البند | رقم يميّز كل بند مبيعات |
-| الفرع | فرع المتجر |
-| رمز العميل | الرقم التعريفي للعميل |
-| رمز المنتج | الرقم التعريفي للمنتج |
-| اسم المنتج | اسم قطعة الملابس أو المنتج |
-| الفئة | تصنيف المنتج |
-| الكمية | عدد القطع في البند |
-| سعر الوحدة | سعر بيع القطعة قبل الخصم |
-| الخصم % | نسبة الخصم على البند |
-| إجمالي السطر | قيمة البند المسجّلة بعد الخصم |
-| تكلفة الوحدة | تكلفة القطعة على المتجر |
-| حالة الطلب | حالة الطلب المسجّلة في النظام |
-
----
-
-## 02 — Data Profiling | فحص البيانات واكتشاف المشكلات
-
-بعد جمع الملفات، لم أبدأ بحذف القيم أو تغييرها مباشرة. فحصتُ البيانات أولًا لمعرفة ما إذا كانت هناك قيم مفقودة أو صفوف مكررة أو تنسيقات مختلفة.
-
-### 2.1 فحص حجم البيانات وأنواع الأعمدة
+كتبتُ دالة تحسب عدد القيم المفقودة ونسبتها في كل عمود، ثم طبّقتها على البيانات المجمّعة.
 
 </div>
 
-<div dir="ltr" align="left">
-<pre dir="ltr"><code class="language-python">print("حجم البيانات:", combined_sales_df.shape)
-print("أسماء الأعمدة:", combined_sales_df.columns.tolist())
-print("أنواع البيانات:")
-print(combined_sales_df.dtypes)</code></pre>
-</div>
+```python
+# Missing values per column
+def miising_values_per_columns(data):
+      missing_values = data.isna().sum()
+      # Missing values percentage
+      missing_percentage =( data.isna().mean()*100).round(3)
+      # Data quality summary
+      missing_values_report = pd.DataFrame({
+      "Missing Count":missing_values,
+            "Missing %":missing_percentage
+      })
+      display(missing_values_report)
+      
+miising_values_per_columns(combined_sales_df)
+```
 
 <div dir="rtl" align="right">
 
-أظهر الفحص **4,862 سجلًا و14 عمودًا**. ولاحظتُ أن عمود `سعر الوحدة` ليس من نوع رقمي موحّد، مما جعلني أراجع القيم الموجودة داخله.
+**النتيجة قبل التنظيف:** 5 قيم مفقودة في عمود `رمز العميل` (0.103%)، ولم تظهر قيم مفقودة في التواريخ والأسعار قبل اختبار تنسيقهما.
 
-### 2.2 اكتشاف القيم المفقودة
+### 2.3 فحص الصفوف المتكررة بالكامل
 
-استخدمتُ دالة تعرض عدد القيم المفقودة ونسبتها في كل عمود:
+استخدمتُ `duplicated()` لمعرفة ما إذا كانت هناك صفوف متطابقة بالكامل.
 
 </div>
 
-<div dir="ltr" align="left">
-<pre dir="ltr"><code class="language-python">def missing_values_per_columns(data):
-    missing_count = data.isna().sum()
-    missing_percentage = (data.isna().mean() * 100).round(3)
+```python
+# Count fully duplicated rows
+duplicate_rows_count = combined_sales_df.duplicated().sum()
+print("Duplicate Rows:", duplicate_rows_count)
+# Display duplicated records for review
+duplicate_records_df = combined_sales_df[
+    combined_sales_df.duplicated(keep=False)
+]
 
-    missing_report = pd.DataFrame({
-        "عدد القيم المفقودة": missing_count,
-        "النسبة المئوية": missing_percentage
-    })
-    display(missing_report)
-
-missing_values_per_columns(combined_sales_df)</code></pre>
-</div>
+duplicate_records_df
+```
 
 <div dir="rtl" align="right">
 
-**مخرجات التشغيل:**
+**مخرجات التشغيل:** `Duplicate Rows: 0`، وظهر جدول فارغ عند عرض السجلات المكررة.
 
-| العمود | عدد القيم المفقودة |
-|---|---:|
-| رمز العميل | 5 |
-| بقية الأعمدة | 0 |
+### 2.4 اكتشاف التواريخ المختلفة
 
-</div>
-
-<div dir="rtl" align="right">
-
-**النتيجة الأولى:** اكتشفتُ **5 سجلات** فيها `رمز العميل` مفقود. ولم تكن هناك قيم فارغة ظاهرة في التاريخ أو السعر؛ لكن هذا لا يعني أن تنسيق كل القيم صحيح.
-
-### 2.3 فحص الصفوف المتطابقة
+جرّبتُ تحويل التواريخ وفق الصيغة المتوقعة **يوم/شهر/سنة**. القيم التي لم يستطع Pandas تفسيرها ظهرت في نتيجة الفحص بوصفها قيمًا غير صالحة لهذا التنسيق، ثم عرضتُ سجلاتها الأصلية.
 
 </div>
 
-<div dir="ltr" align="left">
-<pre dir="ltr"><code class="language-python">print("الصفوف المتطابقة بالكامل:", combined_sales_df.duplicated().sum())</code></pre>
-</div>
-
-<div dir="rtl" align="right">
-
-**مخرجات التشغيل:**
-
-<pre dir="rtl" align="right"><code>الصفوف المتطابقة بالكامل: 0</code></pre>
-
-</div>
-
-<div dir="rtl" align="right">
-
-**النتيجة:** لا توجد صفوف متطابقة بالكامل. وهذا يختلف عن فحص تكرار `رقم البند` الذي أجريته لاحقًا.
-
-### 2.4 كيف اكتشفتُ التواريخ المكتوبة بتنسيق مختلف؟
-
-معظم التواريخ مكتوبة بصيغة **يوم/شهر/سنة**، مثل `03/05/2025`. اختبرتُ قراءة كل تاريخ بهذا التنسيق، ثم عرضتُ السجلات التي لم تتوافق معه:
-
-</div>
-
-<div dir="ltr" align="left">
-<pre dir="ltr"><code class="language-python"># اختبار التواريخ دون تعديل البيانات الأصلية
+```python
+# 1. اكتشاف الصفوف التي تحتوي على تواريخ مختلفة
 date_check = pd.to_datetime(
     combined_sales_df["التاريخ"],
     format="%d/%m/%Y",
     errors="coerce"
 )
-
 invalid_dates_df = combined_sales_df.loc[
-    date_check.isna() &amp; combined_sales_df["التاريخ"].notna(),
+    date_check.isna(),
     ["رقم البند", "التاريخ"]
 ]
-
 print("عدد التواريخ مختلفة التنسيق:", len(invalid_dates_df))
-display(invalid_dates_df)</code></pre>
-</div>
+invalid_dates_df
+```
 
 <div dir="rtl" align="right">
 
-**مخرجات التشغيل:**
+**مخرجات التشغيل: عدد التواريخ مختلفة التنسيق: 3**
 
-<pre dir="rtl" align="right"><code>عدد التواريخ مختلفة التنسيق: 3</code></pre>
+| رقم الصف | رقم البند | التاريخ الأصلي |
+|---|---|---|
+| 972 | س000986 | `2025-05-03` |
+| 2438 | س002486 | `2025-11-03` |
+| 3920 | س004137 | `2026-04-02` |
 
-</div>
+هذه التواريخ تبدأ بالسنة بدل اليوم. **لم أعدّل البيانات الأصلية أثناء هذا الفحص.**
 
-<div dir="rtl" align="right">
+### 2.5 اكتشاف الأسعار المختلفة
 
-**النتيجة: 3 سجلات** مختلفة التنسيق:
-
-| رقم الصف | القيمة الأصلية | المشكلة |
-|---:|---|---|
-| 972 | `2025-05-03` | مكتوب سنة-شهر-يوم |
-| 2438 | `2025-11-03` | مكتوب سنة-شهر-يوم |
-| 3920 | `2026-04-02` | مكتوب سنة-شهر-يوم |
-
-هذه التواريخ ليست خاطئة في ذاتها؛ إنما **طريقة كتابتها مختلفة** عن التنسيق المتوقع. استخدمتُ `errors="coerce"` حتى تظهر القيم التي لم تُقرأ بنجاح على أنها `NaT` في **نتيجة الاختبار فقط**.
-
-### 2.5 كيف اكتشفتُ الأسعار المكتوبة بطريقة مختلفة؟
-
-عندما حاولتُ قراءة أسعار الوحدات كأرقام، اكتشفتُ أن بعض القيم تحتوي على **`ر.س`** داخل النص:
+اختبرتُ إمكانية تحويل `سعر الوحدة` إلى رقم باستخدام `pd.to_numeric()`. ثم عرضتُ الأسعار التي فشل تحويلها مباشرة.
 
 </div>
 
-<div dir="ltr" align="left">
-<pre dir="ltr"><code class="language-python"># اختبار الأسعار دون تعديل البيانات الأصلية
+```python
+# 2. اكتشاف الصفوف التي تحتوي على أسعار غير قابلة للتحويل
+
+# محاولة تحويل سعر الوحدة إلى رقم
 price_check = pd.to_numeric(
     combined_sales_df["سعر الوحدة"],
     errors="coerce"
 )
 
+# استخراج الصفوف التي فشل تحويل سعرها
 invalid_prices_df = combined_sales_df.loc[
-    price_check.isna() &amp; combined_sales_df["سعر الوحدة"].notna(),
+    price_check.isna(),
     ["رقم البند", "سعر الوحدة"]
 ]
 
 print("عدد الأسعار مختلفة التنسيق:", len(invalid_prices_df))
-display(invalid_prices_df)</code></pre>
-</div>
+display(invalid_prices_df)
+```
 
 <div dir="rtl" align="right">
 
-**مخرجات التشغيل:**
+**مخرجات التشغيل: عدد الأسعار مختلفة التنسيق: 4**
 
-<pre dir="rtl" align="right"><code>عدد الأسعار مختلفة التنسيق: 4</code></pre>
+| رقم الصف | رقم البند | السعر كما ظهر في الملف |
+|---|---|---|
+| 714 | س000818 | `ر.س 115.00` |
+| 1927 | س002157 | `ر.س 140.00` |
+| 3071 | س003185 | `ر.س 112.20` |
+| 4558 | س004828 | `ر.س 127.50` |
 
-</div>
+كانت المشكلة وجود **رمز العملة مع السعر**؛ لذلك لم تُقرأ هذه القيم كأرقام مباشرة.
 
-<div dir="rtl" align="right">
+### 2.6 فحص نتيجة الاختبارين دون تغيير الجدول الأساسي
 
-**النتيجة: 4 سجلات**:
-
-| رقم الصف | السعر كما ورد في الملف |
-|---:|---|
-| 714 | `ر.س 115.00` |
-| 1927 | `ر.س 140.00` |
-| 3071 | `ر.س 112.20` |
-| 4558 | `ر.س 127.50` |
-
-الأسعار نفسها موجودة، لكن **رمز العملة يمنع تحويلها مباشرة إلى أرقام**.
-
-### 2.6 عرض المشكلات في تقرير واحد
-
-حتى أرى نتائج اختبار التاريخ والسعر معًا، استخدمتُ نسخة مؤقتة من البيانات، دون تغيير القيم الأصلية:
+أنشأتُ نسخة مخصصة للفحص، وأضفتُ إليها نتيجتي اختبار التاريخ والسعر، ثم استدعيتُ دالة فحص القيم المفقودة نفسها.
 
 </div>
 
-<div dir="ltr" align="left">
-<pre dir="ltr"><code class="language-python">profiling_sales_df = combined_sales_df.copy()
+```python
+profiling_sales_df = combined_sales_df.copy()
+
+# إضافة نتائج اختبار التواريخ
 profiling_sales_df["التاريخ"] = date_check
-profiling_sales_df["سعر الوحدة"] = price_check
 
-missing_values_per_columns(profiling_sales_df)</code></pre>
-</div>
+# إضافة نتائج اختبار الأسعار
+profiling_sales_df["سعر الوحدة"] = price_check
+      
+miising_values_per_columns(profiling_sales_df)
+```
 
 <div dir="rtl" align="right">
 
-| العمود | ما كشفه الاختبار |
+**النتيجة في نسخة الفحص:**
+
+| العمود | العدد |
 |---|---:|
-| التاريخ | 3 قيم لم تتوافق مع صيغة التاريخ المحددة |
-| سعر الوحدة | 4 قيم لم يمكن تحويلها مباشرة إلى أرقام |
-| رمز العميل | 5 قيم مفقودة من الأصل |
+| التاريخ | 3 |
+| سعر الوحدة | 4 |
+| رمز العميل | 5 |
 
-**ملاحظة مهمة:** القيم الـ3 والـ4 لم تكن مفقودة في الملفات؛ ظهرت كقيم غير قابلة للتفسير أثناء الاختبار. وهذا سبب أهمية مراجعتها قبل الحذف أو التعويض.
-
----
+هذه الأرقام تجمع بين القيم المفقودة أصلًا، والقيم التي لم تتوافق مع التنسيق المطلوب في الاختبار.
 
 ## 03 — Transform | تنظيف البيانات وتحويلها
 
-بعد تحديد المشكلات، بدأتُ معالجتها. أستخدم في الأكواد التالية نسخة من البيانات حتى تبقى القيم المستخرجة من الملفات متاحة للمقارنة:
+### 3.1 توحيد سعر الوحدة والتواريخ
+
+استخدمتُ `str.replace()` لإزالة رمز العملة، و`pd.to_numeric()` لتحويل الأسعار إلى أرقام. واستخدمتُ `pd.to_datetime()` لمعالجة صيغ التواريخ المختلفة.
+
+**الكود كما كتبته في الدفتر:**
 
 </div>
 
-<div dir="ltr" align="left">
-<pre dir="ltr"><code class="language-python">cleaned_sales_df = combined_sales_df.copy()</code></pre>
-</div>
+```python
 
-<div dir="rtl" align="right">
 
-### 3.1 توحيد التواريخ
-
-</div>
-
-<div dir="ltr" align="left">
-<pre dir="ltr"><code class="language-python">cleaned_sales_df["التاريخ"] = pd.to_datetime(
-    cleaned_sales_df["التاريخ"],
-    format="mixed",
-    dayfirst=True,
-    errors="coerce"
-)</code></pre>
-</div>
-
-<div dir="rtl" align="right">
-
-- `format="mixed"` يتيح قراءة أكثر من شكل للتاريخ.
-- `dayfirst=True` يفضّل تفسير اليوم قبل الشهر في التواريخ الملتبسة.
-- بعد التحويل، راجعتُ القيم للتأكد من أنها تمثل الأيام الصحيحة، ولا سيما التواريخ الثلاثة التي تبدأ بالسنة.
-
-### 3.2 تنظيف سعر الوحدة
-
-</div>
-
-<div dir="ltr" align="left">
-<pre dir="ltr"><code class="language-python">cleaned_sales_df["سعر الوحدة"] = pd.to_numeric(
-    cleaned_sales_df["سعر الوحدة"]
-    .astype(str)
+combined_sales_df["سعر الوحدة"] = pd.to_numeric(combined_sales_df["سعر الوحدة"]    .astype(str)
     .str.replace("ر.س", "", regex=False)
-    .str.strip(),
-    errors="coerce"
-)</code></pre>
-</div>
+    .str.strip(),errors="coerce")
+
+combined_sales_df["التاريخ"] = pd.to_datetime(combined_sales_df["التاريخ"], 
+    errors="coerce",
+     format="mixed",
+    dayfirst=True,)
+combined_sales_df.dtypes
+```
 
 <div dir="rtl" align="right">
 
-في هذا الكود حوّلتُ القيم إلى نص مؤقتًا باستخدام `astype(str)`، ثم أزلتُ رمز العملة باستخدام `str.replace()`، وحذفتُ المسافات الزائدة باستخدام `str.strip()`. أخيرًا حوّلتُ القيم إلى أرقام باستخدام `pd.to_numeric()`.
+**مخرجات التشغيل:** ظهر نوع `التاريخ` على أنه `datetime64[us]`، ونوع `سعر الوحدة` على أنه `float64`.
 
-مثلًا، أصبحت القيمة `ر.س 115.00` تساوي **`115.0`**، وأصبح بالإمكان استخدامها في الحسابات.
+### 3.2 استرجاع رموز العملاء المفقودة
 
-### 3.3 تعويض رموز العملاء المفقودة
+بحثتُ عن الفواتير التي ينقص أحد بنودها رمز العميل، ثم عن بند آخر في الفاتورة نفسها يحمل الرمز. استخدمتُ ذلك الرمز لتعبئة الخانة الناقصة في البيانات.
 
-لم أضع رموزًا عشوائية بدل القيم المفقودة. بحثتُ عن **نفس رقم الفاتورة**، وتحققتُ من رمز العميل في بنود الفاتورة الأخرى. إذا كانت جميع الرموز المعروفة في الفاتورة متفقة على رمز واحد، استخدمتُه لملء القيمة المفقودة.
+**الكود الذي نفذتُه:**
 
 </div>
 
-<div dir="ltr" align="left">
-<pre dir="ltr"><code class="language-python">missing_customer_rows = cleaned_sales_df.index[
-    cleaned_sales_df["رمز العميل"].isna()
+```python
+mis =combined_sales_df[combined_sales_df["رمز العميل"].isna()]
+
+
+# الفواتير التي ينقصها رمز العميل
+missing_invoices = combined_sales_df.loc[
+    combined_sales_df["رمز العميل"].isna(),
+    "رقم الفاتورة"
+].unique()
+
+# # عرض جميع بنود هذه الفواتير
+invoice_check_df = combined_sales_df.loc[
+    combined_sales_df["رقم الفاتورة"].isin(missing_invoices),
+    ["رقم الفاتورة", "رقم البند", "رمز العميل"]
 ]
 
-for row_index in missing_customer_rows:
-    invoice_number = cleaned_sales_df.loc[row_index, "رقم الفاتورة"]
 
-    matching_customer_ids = cleaned_sales_df.loc[
-        (cleaned_sales_df["رقم الفاتورة"] == invoice_number)
-        &amp; cleaned_sales_df["رمز العميل"].notna(),
+
+for i in mis.index:
+    invoice_number = mis.loc[i,"رقم الفاتورة"]
+  
+    customer_ids = combined_sales_df.loc[
+        (combined_sales_df["رقم الفاتورة"] == invoice_number)
+        & (combined_sales_df["رمز العميل"].notna()),
         "رمز العميل"
     ].unique()
-
-    # التعويض فقط إذا كان هناك رمز معروف واحد غير متعارض
-    if len(matching_customer_ids) == 1:
-        cleaned_sales_df.loc[row_index, "رمز العميل"] = matching_customer_ids[0]</code></pre>
-</div>
-
-<div dir="rtl" align="right">
-
-**النتيجة:** أمكن استرجاع رموز العملاء الخمسة من فواتيرها، دون حذف سجلات المبيعات.
-
-### 3.4 استخدام أسماء أعمدة أوضح
-
-غيّرتُ اسمين حتى يعرف قارئ الجدول معنى المبلغ المسجل:
-
-| الاسم قبل التعديل | الاسم بعد التعديل |
-|---|---|
-| `سعر الوحدة` | `سعر بيع الوحدة` |
-| `إجمالي السطر` | `صافي مبيعات المنتج` |
-
-</div>
-
-<div dir="ltr" align="left">
-<pre dir="ltr"><code class="language-python">cleaned_sales_df = cleaned_sales_df.rename(columns={
-    "سعر الوحدة": "سعر بيع الوحدة",
-    "إجمالي السطر": "صافي مبيعات المنتج"
-})</code></pre>
-</div>
+ 
+    combined_sales_df.loc[i,"رمز العميل"] =customer_ids[0]
+combined_sales_df[combined_sales_df["رمز العميل"].isna()]
+```
 
 <div dir="rtl" align="right">
 
-يقصد بـ**صافي مبيعات المنتج** في هذا الجدول قيمة **بند الفاتورة بعد الخصم**؛ وليس بالضرورة صافي إيرادات المتجر بعد المرتجعات.
+**مخرجات التشغيل:** لم تبقَ سجلات ذات رمز عميل مفقود في الجدول الناتج.
 
----
+### 3.3 إعادة تسمية الأعمدة
 
-## 04 — Data Validation | التأكد من صحة النتائج
-
-بعد التنظيف، أجريتُ اختبارات للتأكد من أن القيم سليمة، وأن المعالجة لم تُفقدنا سجلات مبيعات.
-
-### 4.1 مقارنة عدد الصفوف والقيم المفقودة
+عدّلتُ اسم `إجمالي السطر` إلى `صافي مبيعات المنتج`، واسم `سعر الوحدة` إلى `سعر بيع الوحدة` ليكون معنى العمودين أوضح.
 
 </div>
 
-<div dir="ltr" align="left">
-<pre dir="ltr"><code class="language-python">print("الصفوف قبل التنظيف:", len(combined_sales_df))
-print("الصفوف بعد التنظيف:", len(cleaned_sales_df))
+```python
 
-missing_values_per_columns(cleaned_sales_df)
-print(cleaned_sales_df.dtypes)</code></pre>
-</div>
+combined_sales_df = combined_sales_df.rename(
+    columns={
+        "إجمالي السطر": "صافي مبيعات المنتج",
+        "سعر الوحدة": "سعر بيع الوحدة"
+    }
+)
+combined_sales_df
+```
 
 <div dir="rtl" align="right">
 
-**النتيجة:** بقي عدد الصفوف **4,862**، ولم تبقَ قيم مفقودة في البيانات بعد المعالجة.
+### 3.4 إعادة فحص القيم المفقودة
 
-### 4.2 فحص الكميات والأسعار والخصومات وأرقام البنود
+استخدمتُ دالة الفحص التي كتبتُها سابقًا مرة أخرى. **يُراعى تنفيذ هذا الفحص بعد معالجة رموز العملاء**؛ لأن النتيجة المحفوظة في Jupyter تعكس وقت تشغيل الخلية، وقد تختلف عند تشغيل الخلايا بترتيب آخر.
 
 </div>
 
-<div dir="ltr" align="left">
-<pre dir="ltr"><code class="language-python">validation_report = pd.DataFrame([{
-    "كميات صفرية أو سالبة": (cleaned_sales_df["الكمية"] &lt;= 0).sum(),
-    "أسعار سالبة": (cleaned_sales_df["سعر بيع الوحدة"] &lt; 0).sum(),
-    "خصومات سالبة": (cleaned_sales_df["الخصم %"] &lt; 0).sum(),
-    "خصومات فوق 100%": (cleaned_sales_df["الخصم %"] &gt; 100).sum(),
-    "أرقام بنود مكررة": cleaned_sales_df["رقم البند"].duplicated().sum()
-}])
-
-display(validation_report)</code></pre>
-</div>
+```python
+miising_values_per_columns(combined_sales_df)
+```
 
 <div dir="rtl" align="right">
 
-**النتيجة:** جميع الأعداد في التقرير كانت **صفرًا**؛ أي لم تظهر مخالفات للشروط التي اختبرتها.
+**النتيجة المحفوظة في الدفتر:** صفر قيم مفقودة في جميع الأعمدة بعد إتمام المعالجات.
 
-### 4.3 التأكد من حساب صافي مبيعات المنتج
+## 04 — Data Validation | التحقق من صحة النتائج
 
-تحققتُ من أن المبلغ المسجّل في كل بند يتوافق مع الكمية وسعر البيع ونسبة الخصم:
+### 4.1 مقارنة صافي المبيعات المحسوب بالمسجّل
 
-**صافي مبيعات المنتج = الكمية × سعر بيع الوحدة × (1 − نسبة الخصم ÷ 100)**
+حسبتُ صافي مبيعات المنتج من الكمية وسعر البيع ونسبة الخصم، وقارنتُه بالقيمة الموجودة في البيانات. كان فحصي يبحث عن الفروق **الأكبر من 0.01 ريال** أو القيم التي فشل حسابها.
 
 </div>
 
-<div dir="ltr" align="left">
-<pre dir="ltr"><code class="language-python">expected_sales = (
-    cleaned_sales_df["الكمية"]
-    * cleaned_sales_df["سعر بيع الوحدة"]
-    * (1 - cleaned_sales_df["الخصم %"] / 100)
+```python
+
+# Calculate expected net sales
+expected_sales = (
+    combined_sales_df["الكمية"]
+    * combined_sales_df["سعر بيع الوحدة"]
+    * (1 - combined_sales_df["الخصم %"] / 100)
 ).round(2)
 
+# Compare expected and recorded sales
 sales_difference = (
-    expected_sales - cleaned_sales_df["صافي مبيعات المنتج"]
+    expected_sales
+    - combined_sales_df["صافي مبيعات المنتج"]
 ).abs().round(2)
-
-# فحص الفروق التي تتجاوز هللة واحدة
-incorrect_sales_df = cleaned_sales_df.loc[
-    (sales_difference &gt; 0.01)
+# Find records with calculation errors
+incorrect_sales_df = combined_sales_df.loc[
+    (sales_difference > 0.01)
     | expected_sales.isna()
-    | cleaned_sales_df["صافي مبيعات المنتج"].isna()
+    | combined_sales_df["صافي مبيعات المنتج"].isna()
 ]
 
-print("السجلات بفارق أكبر من هللة:", len(incorrect_sales_df))</code></pre>
-</div>
+print("عدد السجلات غير المتطابقة:", len(incorrect_sales_df))
+incorrect_sales_df[
+        [
+            "رقم البند",
+            "الكمية",
+            "سعر بيع الوحدة",
+            "الخصم %",
+            "صافي مبيعات المنتج"
+        ]
+]
+```
 
 <div dir="rtl" align="right">
 
-**مخرجات التشغيل:**
+**مخرجات التشغيل:** `عدد السجلات غير المتطابقة: 0` وفق الشرط الذي استخدمتُه في الكود. لا يعني هذا بالضرورة عدم وجود أي فرق أصغر من ذلك.
 
-<pre dir="rtl" align="right"><code>السجلات بفارق أكبر من هللة: 0</code></pre>
+### 4.2 فحص قواعد الكميات والأسعار والخصومات وأرقام البنود
+
+تحققتُ من الكميات غير الموجبة، والأسعار السالبة، والخصومات السالبة، والخصومات التي تتجاوز 100%، وأرقام البنود المكررة.
+
+**الكود كما نفذتُه، دون تغيير شروط الفحص:**
 
 </div>
+
+```python
+# 1. الكميات الصفرية أو السالبة
+
+invalid_quantity =(combined_sales_df["الكمية"] <= 0).sum()
+# 2. الأسعار الصفرية أو السالبة
+
+invalid_price = (combined_sales_df["سعر بيع الوحدة"] <0).sum()
+# 3. الخصومات السالبة
+
+negative_discount=     (combined_sales_df["الخصم %"] <0).sum()
+# 4. الخصومات الأكبر من 100%
+
+high_discount =     (combined_sales_df["الخصم %"] >100).sum()
+
+# عدد أرقام البنود المكررة
+duplicate_item_count = (
+    combined_sales_df["رقم البند"].duplicated().sum()
+)
+duplicate_item_count
+# Create Validation Report
+validation_report = pd.DataFrame([{
+    "Invalid Quantity": invalid_quantity,
+    "Invalid Price": invalid_price,
+    "Negative Discount": negative_discount,
+    "Discount Above 100%": high_discount,
+    "duplicate_item_count":duplicate_item_count
+}])
+validation_report
+```
 
 <div dir="rtl" align="right">
 
-**النتيجة:** لم يظهر أي سجل بفارق يزيد على **0.01 ريال**. ووجدتُ **17 سجلًا** بفارق هللة واحدة عند المقارنة بعد التقريب؛ لذلك لا يصح القول إن كل المبالغ متطابقة حرفيًا. لم أغيّر المبالغ المسجلة بسبب فرق التقريب.
+**مخرجات التشغيل:** كانت جميع القيم الخمس **0**.
 
----
+**حدود هذا الفحص:** شرط السعر في الكود هو `< 0`، لذا فهو يتحقق من الأسعار **السالبة** فقط، وليس السعر الصفري. لم أغيّر الشرط في هذا التوثيق.
 
-## 05 — Load | حفظ النتيجة في Excel
+### 4.3 عرض البنود ذات الأرقام المكررة
 
-بعد تنظيف البيانات وفحصها، صدّرتُ جدول المبيعات الموحّد إلى ملف Excel:
+عرضتُ جميع السجلات التي تشترك في رقم بند، إن وجدت.
 
 </div>
 
-<div dir="ltr" align="left">
-<pre dir="ltr"><code class="language-python">cleaned_sales_df.to_excel(
-    "data ETL.xlsx",
-    index=False
-)</code></pre>
-</div>
+```python
+# عرض جميع السجلات التي تشترك في رقم بند
+duplicate_items_df = combined_sales_df.loc[
+    combined_sales_df["رقم البند"].duplicated(keep=False),
+    ["رقم الفاتورة", "رقم البند", "اسم المنتج", "الفرع"]
+]
+
+duplicate_items_df
+```
 
 <div dir="rtl" align="right">
 
-الخيار `index=False` يمنع إضافة عمود إضافي لأرقام الصفوف داخل ملف Excel.
+**مخرجات التشغيل:** جدول فارغ؛ لم تظهر أرقام بنود مكررة في الفحص.
 
-## ملخص النتائج
+## 05 — Load | حفظ البيانات في Excel
 
-| ما تم تنفيذه | النتيجة |
+بعد معالجة البيانات وإجراء الفحوصات، حفظتُ الناتج في ملف Excel.
+
+</div>
+
+```python
+
+combined_sales_df.to_excel("data ETL.xlsx", index=False)
+```
+
+<div dir="rtl" align="right">
+
+**اسم الملف الناتج:** `data ETL.xlsx`.
+
+## ملخص ما نفذتُه
+
+| المهمة | النتيجة |
 |---|---|
-| قراءة ملفات المبيعات | 20 ملف HTML |
-| تجميع البيانات | 4,862 سجلًا في 14 عمودًا |
-| اكتشاف اختلافات التاريخ | 3 سجلات، ثم توحيد تنسيقها |
-| اكتشاف اختلافات السعر | 4 سجلات، ثم إزالة رمز العملة وتحويل السعر إلى رقم |
-| معالجة رموز العملاء | استرجاع 5 رموز من بنود الفواتير المطابقة |
-| التحقق من القيم المفقودة | 0 بعد التنظيف |
-| التحقق من القيم التجارية وأرقام البنود | لا مخالفات للقواعد التي تم اختبارها |
-| مراجعة حسابات المبيعات | 17 فارق هللة، ولا يوجد فرق أكبر من هللة |
-| حفظ النتيجة | ملف Excel موحّد |
+| استخراج وتجميع ملفات HTML | 20 ملفًا |
+| عدد الصفوف والأعمدة | 4,862 × 14 |
+| الصفوف المتطابقة بالكامل | 0 |
+| تواريخ بتنسيق مختلف | 3 |
+| أسعار تحتوي على رمز العملة | 4 |
+| رموز عملاء مفقودة | 5 قبل المعالجة، و0 بعدها |
+| اختلافات الحساب أكبر من 0.01 ريال وفق الكود | 0 |
+| مخالفات قواعد الفحص المكتوبة | 0 |
+| الحفظ النهائي | `data ETL.xlsx` |
 
-**تاريخ تنفيذ المشروع: 12–13 نوفمبر 2026.**  
-**فترة البيانات المستخدمة: يناير 2025 – يونيو 2026.**
+*هذا التوثيق يستخدم الأكواد الموجودة في دفتر Jupyter كما نُفّذت، حتى لو كان هناك مجال لتحسين أسماء المتغيرات أو ترتيب الخلايا أو شروط بعض الاختبارات؛ لم تُضف أمثلة برمجية جديدة.*
 
 </div>
