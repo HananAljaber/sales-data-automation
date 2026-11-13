@@ -472,7 +472,7 @@ combined_sales_df.to_excel("data ETL.xlsx", index=False)
 
 # Clothing Store Sales Data Automation
 
-**Language:** English | [العربية](README.md)
+
 
 **Sales Data Automation | Python · Pandas · HTML · Excel**
 
