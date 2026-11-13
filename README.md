@@ -52,8 +52,8 @@
 
 </div>
 
-```python
-from pathlib import Path
+<div dir="ltr" align="left">
+<pre dir="ltr"><code class="language-python">from pathlib import Path
 import pandas as pd
 
 # المجلد الذي يحتوي على ملفات المبيعات
@@ -77,8 +77,17 @@ combined_sales_df = pd.concat(
 )
 
 print("عدد الملفات:", len(html_files))
-print("حجم البيانات:", combined_sales_df.shape)
-```
+print("حجم البيانات:", combined_sales_df.shape)</code></pre>
+</div>
+
+<div dir="rtl" align="right">
+
+**مخرجات التشغيل:**
+
+- عدد الملفات: **20**
+- حجم البيانات: **4,862 صفًا × 14 عمودًا**
+
+</div>
 
 <div dir="rtl" align="right">
 
@@ -113,12 +122,12 @@ print("حجم البيانات:", combined_sales_df.shape)
 
 </div>
 
-```python
-print("حجم البيانات:", combined_sales_df.shape)
+<div dir="ltr" align="left">
+<pre dir="ltr"><code class="language-python">print("حجم البيانات:", combined_sales_df.shape)
 print("أسماء الأعمدة:", combined_sales_df.columns.tolist())
 print("أنواع البيانات:")
-print(combined_sales_df.dtypes)
-```
+print(combined_sales_df.dtypes)</code></pre>
+</div>
 
 <div dir="rtl" align="right">
 
@@ -130,8 +139,8 @@ print(combined_sales_df.dtypes)
 
 </div>
 
-```python
-def missing_values_per_columns(data):
+<div dir="ltr" align="left">
+<pre dir="ltr"><code class="language-python">def missing_values_per_columns(data):
     missing_count = data.isna().sum()
     missing_percentage = (data.isna().mean() * 100).round(3)
 
@@ -141,8 +150,19 @@ def missing_values_per_columns(data):
     })
     display(missing_report)
 
-missing_values_per_columns(combined_sales_df)
-```
+missing_values_per_columns(combined_sales_df)</code></pre>
+</div>
+
+<div dir="rtl" align="right">
+
+**مخرجات التشغيل:**
+
+| العمود | عدد القيم المفقودة |
+|---|---:|
+| رمز العميل | 5 |
+| بقية الأعمدة | 0 |
+
+</div>
 
 <div dir="rtl" align="right">
 
@@ -152,9 +172,17 @@ missing_values_per_columns(combined_sales_df)
 
 </div>
 
-```python
-print("الصفوف المتطابقة بالكامل:", combined_sales_df.duplicated().sum())
-```
+<div dir="ltr" align="left">
+<pre dir="ltr"><code class="language-python">print("الصفوف المتطابقة بالكامل:", combined_sales_df.duplicated().sum())</code></pre>
+</div>
+
+<div dir="rtl" align="right">
+
+**مخرجات التشغيل:**
+
+<pre dir="rtl" align="right"><code>الصفوف المتطابقة بالكامل: 0</code></pre>
+
+</div>
 
 <div dir="rtl" align="right">
 
@@ -166,8 +194,8 @@ print("الصفوف المتطابقة بالكامل:", combined_sales_df.dupli
 
 </div>
 
-```python
-# اختبار التواريخ دون تعديل البيانات الأصلية
+<div dir="ltr" align="left">
+<pre dir="ltr"><code class="language-python"># اختبار التواريخ دون تعديل البيانات الأصلية
 date_check = pd.to_datetime(
     combined_sales_df["التاريخ"],
     format="%d/%m/%Y",
@@ -175,13 +203,21 @@ date_check = pd.to_datetime(
 )
 
 invalid_dates_df = combined_sales_df.loc[
-    date_check.isna() & combined_sales_df["التاريخ"].notna(),
+    date_check.isna() &amp; combined_sales_df["التاريخ"].notna(),
     ["رقم البند", "التاريخ"]
 ]
 
 print("عدد التواريخ مختلفة التنسيق:", len(invalid_dates_df))
-display(invalid_dates_df)
-```
+display(invalid_dates_df)</code></pre>
+</div>
+
+<div dir="rtl" align="right">
+
+**مخرجات التشغيل:**
+
+<pre dir="rtl" align="right"><code>عدد التواريخ مختلفة التنسيق: 3</code></pre>
+
+</div>
 
 <div dir="rtl" align="right">
 
@@ -201,21 +237,29 @@ display(invalid_dates_df)
 
 </div>
 
-```python
-# اختبار الأسعار دون تعديل البيانات الأصلية
+<div dir="ltr" align="left">
+<pre dir="ltr"><code class="language-python"># اختبار الأسعار دون تعديل البيانات الأصلية
 price_check = pd.to_numeric(
     combined_sales_df["سعر الوحدة"],
     errors="coerce"
 )
 
 invalid_prices_df = combined_sales_df.loc[
-    price_check.isna() & combined_sales_df["سعر الوحدة"].notna(),
+    price_check.isna() &amp; combined_sales_df["سعر الوحدة"].notna(),
     ["رقم البند", "سعر الوحدة"]
 ]
 
 print("عدد الأسعار مختلفة التنسيق:", len(invalid_prices_df))
-display(invalid_prices_df)
-```
+display(invalid_prices_df)</code></pre>
+</div>
+
+<div dir="rtl" align="right">
+
+**مخرجات التشغيل:**
+
+<pre dir="rtl" align="right"><code>عدد الأسعار مختلفة التنسيق: 4</code></pre>
+
+</div>
 
 <div dir="rtl" align="right">
 
@@ -236,13 +280,13 @@ display(invalid_prices_df)
 
 </div>
 
-```python
-profiling_sales_df = combined_sales_df.copy()
+<div dir="ltr" align="left">
+<pre dir="ltr"><code class="language-python">profiling_sales_df = combined_sales_df.copy()
 profiling_sales_df["التاريخ"] = date_check
 profiling_sales_df["سعر الوحدة"] = price_check
 
-missing_values_per_columns(profiling_sales_df)
-```
+missing_values_per_columns(profiling_sales_df)</code></pre>
+</div>
 
 <div dir="rtl" align="right">
 
@@ -262,9 +306,9 @@ missing_values_per_columns(profiling_sales_df)
 
 </div>
 
-```python
-cleaned_sales_df = combined_sales_df.copy()
-```
+<div dir="ltr" align="left">
+<pre dir="ltr"><code class="language-python">cleaned_sales_df = combined_sales_df.copy()</code></pre>
+</div>
 
 <div dir="rtl" align="right">
 
@@ -272,14 +316,14 @@ cleaned_sales_df = combined_sales_df.copy()
 
 </div>
 
-```python
-cleaned_sales_df["التاريخ"] = pd.to_datetime(
+<div dir="ltr" align="left">
+<pre dir="ltr"><code class="language-python">cleaned_sales_df["التاريخ"] = pd.to_datetime(
     cleaned_sales_df["التاريخ"],
     format="mixed",
     dayfirst=True,
     errors="coerce"
-)
-```
+)</code></pre>
+</div>
 
 <div dir="rtl" align="right">
 
@@ -291,15 +335,15 @@ cleaned_sales_df["التاريخ"] = pd.to_datetime(
 
 </div>
 
-```python
-cleaned_sales_df["سعر الوحدة"] = pd.to_numeric(
+<div dir="ltr" align="left">
+<pre dir="ltr"><code class="language-python">cleaned_sales_df["سعر الوحدة"] = pd.to_numeric(
     cleaned_sales_df["سعر الوحدة"]
     .astype(str)
     .str.replace("ر.س", "", regex=False)
     .str.strip(),
     errors="coerce"
-)
-```
+)</code></pre>
+</div>
 
 <div dir="rtl" align="right">
 
@@ -313,8 +357,8 @@ cleaned_sales_df["سعر الوحدة"] = pd.to_numeric(
 
 </div>
 
-```python
-missing_customer_rows = cleaned_sales_df.index[
+<div dir="ltr" align="left">
+<pre dir="ltr"><code class="language-python">missing_customer_rows = cleaned_sales_df.index[
     cleaned_sales_df["رمز العميل"].isna()
 ]
 
@@ -323,14 +367,14 @@ for row_index in missing_customer_rows:
 
     matching_customer_ids = cleaned_sales_df.loc[
         (cleaned_sales_df["رقم الفاتورة"] == invoice_number)
-        & cleaned_sales_df["رمز العميل"].notna(),
+        &amp; cleaned_sales_df["رمز العميل"].notna(),
         "رمز العميل"
     ].unique()
 
     # التعويض فقط إذا كان هناك رمز معروف واحد غير متعارض
     if len(matching_customer_ids) == 1:
-        cleaned_sales_df.loc[row_index, "رمز العميل"] = matching_customer_ids[0]
-```
+        cleaned_sales_df.loc[row_index, "رمز العميل"] = matching_customer_ids[0]</code></pre>
+</div>
 
 <div dir="rtl" align="right">
 
@@ -347,12 +391,12 @@ for row_index in missing_customer_rows:
 
 </div>
 
-```python
-cleaned_sales_df = cleaned_sales_df.rename(columns={
+<div dir="ltr" align="left">
+<pre dir="ltr"><code class="language-python">cleaned_sales_df = cleaned_sales_df.rename(columns={
     "سعر الوحدة": "سعر بيع الوحدة",
     "إجمالي السطر": "صافي مبيعات المنتج"
-})
-```
+})</code></pre>
+</div>
 
 <div dir="rtl" align="right">
 
@@ -368,13 +412,13 @@ cleaned_sales_df = cleaned_sales_df.rename(columns={
 
 </div>
 
-```python
-print("الصفوف قبل التنظيف:", len(combined_sales_df))
+<div dir="ltr" align="left">
+<pre dir="ltr"><code class="language-python">print("الصفوف قبل التنظيف:", len(combined_sales_df))
 print("الصفوف بعد التنظيف:", len(cleaned_sales_df))
 
 missing_values_per_columns(cleaned_sales_df)
-print(cleaned_sales_df.dtypes)
-```
+print(cleaned_sales_df.dtypes)</code></pre>
+</div>
 
 <div dir="rtl" align="right">
 
@@ -384,17 +428,17 @@ print(cleaned_sales_df.dtypes)
 
 </div>
 
-```python
-validation_report = pd.DataFrame([{
-    "كميات صفرية أو سالبة": (cleaned_sales_df["الكمية"] <= 0).sum(),
-    "أسعار سالبة": (cleaned_sales_df["سعر بيع الوحدة"] < 0).sum(),
-    "خصومات سالبة": (cleaned_sales_df["الخصم %"] < 0).sum(),
-    "خصومات فوق 100%": (cleaned_sales_df["الخصم %"] > 100).sum(),
+<div dir="ltr" align="left">
+<pre dir="ltr"><code class="language-python">validation_report = pd.DataFrame([{
+    "كميات صفرية أو سالبة": (cleaned_sales_df["الكمية"] &lt;= 0).sum(),
+    "أسعار سالبة": (cleaned_sales_df["سعر بيع الوحدة"] &lt; 0).sum(),
+    "خصومات سالبة": (cleaned_sales_df["الخصم %"] &lt; 0).sum(),
+    "خصومات فوق 100%": (cleaned_sales_df["الخصم %"] &gt; 100).sum(),
     "أرقام بنود مكررة": cleaned_sales_df["رقم البند"].duplicated().sum()
 }])
 
-display(validation_report)
-```
+display(validation_report)</code></pre>
+</div>
 
 <div dir="rtl" align="right">
 
@@ -408,8 +452,8 @@ display(validation_report)
 
 </div>
 
-```python
-expected_sales = (
+<div dir="ltr" align="left">
+<pre dir="ltr"><code class="language-python">expected_sales = (
     cleaned_sales_df["الكمية"]
     * cleaned_sales_df["سعر بيع الوحدة"]
     * (1 - cleaned_sales_df["الخصم %"] / 100)
@@ -421,13 +465,21 @@ sales_difference = (
 
 # فحص الفروق التي تتجاوز هللة واحدة
 incorrect_sales_df = cleaned_sales_df.loc[
-    (sales_difference > 0.01)
+    (sales_difference &gt; 0.01)
     | expected_sales.isna()
     | cleaned_sales_df["صافي مبيعات المنتج"].isna()
 ]
 
-print("السجلات بفارق أكبر من هللة:", len(incorrect_sales_df))
-```
+print("السجلات بفارق أكبر من هللة:", len(incorrect_sales_df))</code></pre>
+</div>
+
+<div dir="rtl" align="right">
+
+**مخرجات التشغيل:**
+
+<pre dir="rtl" align="right"><code>السجلات بفارق أكبر من هللة: 0</code></pre>
+
+</div>
 
 <div dir="rtl" align="right">
 
@@ -441,12 +493,12 @@ print("السجلات بفارق أكبر من هللة:", len(incorrect_sales_d
 
 </div>
 
-```python
-cleaned_sales_df.to_excel(
+<div dir="ltr" align="left">
+<pre dir="ltr"><code class="language-python">cleaned_sales_df.to_excel(
     "data ETL.xlsx",
     index=False
-)
-```
+)</code></pre>
+</div>
 
 <div dir="rtl" align="right">
 
