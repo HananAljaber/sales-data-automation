@@ -1,6 +1,10 @@
+<a id="arabic-version"></a>
+
 <div dir="rtl" align="right">
 
 # أتمتة معالجة بيانات مبيعات متجر ملابس
+
+**اللغة:** العربية | [English ↓](#english-version)
 
 **Sales Data Automation | Python · Pandas · HTML · Excel**
 
@@ -32,6 +36,8 @@
 
 </div>
 
+<div dir="ltr" align="left">
+
 ```python
 # Extract
 
@@ -47,6 +53,8 @@ for file_name in html_files:
 combined_sales_df =pd.concat(sales_dataframes,ignore_index=True)
 ```
 
+</div>
+
 <div dir="rtl" align="right">
 
 **النتيجة:** بعد تشغيل فحص حجم البيانات ظهر `Dataset Shape: (4862, 14)`؛ أي 4,862 سجلًا و14 عمودًا.
@@ -61,6 +69,8 @@ combined_sales_df =pd.concat(sales_dataframes,ignore_index=True)
 
 </div>
 
+<div dir="ltr" align="left">
+
 ```python
 # Number of rows and columns
 print("Dataset Shape:", combined_sales_df.shape)
@@ -72,6 +82,8 @@ print("\nData Types:")
 print(combined_sales_df.dtypes)
 ```
 
+</div>
+
 <div dir="rtl" align="right">
 
 **مخرجات التشغيل:** `Dataset Shape: (4862, 14)`، وظهر عمود `التاريخ` كنص (`str`) وعمود `سعر الوحدة` بنوع (`object`).
@@ -81,6 +93,8 @@ print(combined_sales_df.dtypes)
 كتبتُ دالة تحسب عدد القيم المفقودة ونسبتها في كل عمود، ثم طبّقتها على البيانات المجمّعة.
 
 </div>
+
+<div dir="ltr" align="left">
 
 ```python
 # Missing values per column
@@ -98,6 +112,8 @@ def miising_values_per_columns(data):
 miising_values_per_columns(combined_sales_df)
 ```
 
+</div>
+
 <div dir="rtl" align="right">
 
 **النتيجة قبل التنظيف:** 5 قيم مفقودة في عمود `رمز العميل` (0.103%)، ولم تظهر قيم مفقودة في التواريخ والأسعار قبل اختبار تنسيقهما.
@@ -107,6 +123,8 @@ miising_values_per_columns(combined_sales_df)
 استخدمتُ `duplicated()` للتحقق من وجود صفوف مكررة في البيانات.
 
 </div>
+
+<div dir="ltr" align="left">
 
 ```python
 # Count fully duplicated rows
@@ -120,6 +138,8 @@ duplicate_records_df = combined_sales_df[
 duplicate_records_df
 ```
 
+</div>
+
 <div dir="rtl" align="right">
 
 **مخرجات التشغيل:** `Duplicate Rows: 0`، وظهر جدول فارغ عند عرض السجلات المكررة.
@@ -129,6 +149,8 @@ duplicate_records_df
 جرّبتُ تحويل التواريخ وفق الصيغة المتوقعة **يوم/شهر/سنة**. القيم التي لم يستطع Pandas تفسيرها ظهرت في نتيجة الفحص بوصفها قيمًا غير صالحة لهذا التنسيق، ثم عرضتُ سجلاتها الأصلية.
 
 </div>
+
+<div dir="ltr" align="left">
 
 ```python
 # 1. اكتشاف الصفوف التي تحتوي على تواريخ مختلفة
@@ -144,6 +166,8 @@ invalid_dates_df = combined_sales_df.loc[
 print("عدد التواريخ مختلفة التنسيق:", len(invalid_dates_df))
 invalid_dates_df
 ```
+
+</div>
 
 <div dir="rtl" align="right">
 
@@ -162,6 +186,8 @@ invalid_dates_df
 اختبرتُ إمكانية تحويل `سعر الوحدة` إلى رقم باستخدام `pd.to_numeric()`. ثم عرضتُ الأسعار التي فشل تحويلها مباشرة.
 
 </div>
+
+<div dir="ltr" align="left">
 
 ```python
 # 2. اكتشاف الصفوف التي تحتوي على أسعار غير قابلة للتحويل
@@ -182,6 +208,8 @@ print("عدد الأسعار مختلفة التنسيق:", len(invalid_prices_d
 display(invalid_prices_df)
 ```
 
+</div>
+
 <div dir="rtl" align="right">
 
 **مخرجات التشغيل: عدد الأسعار مختلفة التنسيق: 4**
@@ -201,6 +229,8 @@ display(invalid_prices_df)
 
 </div>
 
+<div dir="ltr" align="left">
+
 ```python
 profiling_sales_df = combined_sales_df.copy()
 
@@ -212,6 +242,8 @@ profiling_sales_df["سعر الوحدة"] = price_check
       
 miising_values_per_columns(profiling_sales_df)
 ```
+
+</div>
 
 <div dir="rtl" align="right">
 
@@ -235,6 +267,8 @@ miising_values_per_columns(profiling_sales_df)
 
 </div>
 
+<div dir="ltr" align="left">
+
 ```python
 combined_sales_df["سعر الوحدة"] = pd.to_numeric(combined_sales_df["سعر الوحدة"]    .astype(str)
     .str.replace("ر.س", "", regex=False)
@@ -247,6 +281,8 @@ combined_sales_df["التاريخ"] = pd.to_datetime(combined_sales_df["التا
 combined_sales_df.dtypes
 ```
 
+</div>
+
 <div dir="rtl" align="right">
 
 **مخرجات التشغيل:** ظهر نوع `التاريخ` على أنه `datetime64[us]`، ونوع `سعر الوحدة` على أنه `float64`.
@@ -258,6 +294,8 @@ combined_sales_df.dtypes
 **الكود الذي نفذتُه:**
 
 </div>
+
+<div dir="ltr" align="left">
 
 ```python
 mis =combined_sales_df[combined_sales_df["رمز العميل"].isna()]
@@ -290,6 +328,8 @@ for i in mis.index:
 combined_sales_df[combined_sales_df["رمز العميل"].isna()]
 ```
 
+</div>
+
 <div dir="rtl" align="right">
 
 **مخرجات التشغيل:** لم تبقَ سجلات ذات رمز عميل مفقود في الجدول الناتج.
@@ -299,6 +339,8 @@ combined_sales_df[combined_sales_df["رمز العميل"].isna()]
 عدّلتُ اسم `إجمالي السطر` إلى `صافي مبيعات المنتج`، واسم `سعر الوحدة` إلى `سعر بيع الوحدة` ليكون معنى العمودين أوضح.
 
 </div>
+
+<div dir="ltr" align="left">
 
 ```python
 combined_sales_df = combined_sales_df.rename(
@@ -310,6 +352,8 @@ combined_sales_df = combined_sales_df.rename(
 combined_sales_df
 ```
 
+</div>
+
 <div dir="rtl" align="right">
 
 ### 3.4 إعادة فحص القيم المفقودة
@@ -318,9 +362,13 @@ combined_sales_df
 
 </div>
 
+<div dir="ltr" align="left">
+
 ```python
 miising_values_per_columns(combined_sales_df)
 ```
+
+</div>
 
 <div dir="rtl" align="right">
 
@@ -333,6 +381,8 @@ miising_values_per_columns(combined_sales_df)
 حسبتُ صافي مبيعات المنتج من الكمية وسعر البيع ونسبة الخصم، وقارنتُه بالقيمة الموجودة في البيانات. كان فحصي يبحث عن الفروق **الأكبر من 0.01 ريال** أو القيم التي فشل حسابها.
 
 </div>
+
+<div dir="ltr" align="left">
 
 ```python
 # Calculate expected net sales
@@ -366,6 +416,8 @@ incorrect_sales_df[
 ]
 ```
 
+</div>
+
 <div dir="rtl" align="right">
 
 **مخرجات التشغيل:** `عدد السجلات غير المتطابقة: 0` وفق الشرط الذي استخدمتُه في الكود. لا يعني هذا بالضرورة عدم وجود أي فرق أصغر من ذلك.
@@ -377,6 +429,8 @@ incorrect_sales_df[
 **الكود كما نفذتُه، دون تغيير شروط الفحص:**
 
 </div>
+
+<div dir="ltr" align="left">
 
 ```python
 # 1. الكميات الصفرية أو السالبة
@@ -408,6 +462,8 @@ validation_report = pd.DataFrame([{
 validation_report
 ```
 
+</div>
+
 <div dir="rtl" align="right">
 
 **مخرجات التشغيل:** كانت جميع القيم الخمس **0**.
@@ -420,6 +476,8 @@ validation_report
 
 </div>
 
+<div dir="ltr" align="left">
+
 ```python
 # عرض جميع السجلات التي تشترك في رقم بند
 duplicate_items_df = combined_sales_df.loc[
@@ -429,6 +487,8 @@ duplicate_items_df = combined_sales_df.loc[
 
 duplicate_items_df
 ```
+
+</div>
 
 <div dir="rtl" align="right">
 
@@ -440,9 +500,13 @@ duplicate_items_df
 
 </div>
 
+<div dir="ltr" align="left">
+
 ```python
 combined_sales_df.to_excel("data ETL.xlsx", index=False)
 ```
+
+</div>
 
 <div dir="rtl" align="right">
 
@@ -464,15 +528,13 @@ combined_sales_df.to_excel("data ETL.xlsx", index=False)
 
 </div>
 
+---
 
-
-
-
-
+<a id="english-version"></a>
 
 # Clothing Store Sales Data Automation
 
-
+**Language:** [العربية ↑](#arabic-version) | English
 
 **Sales Data Automation | Python · Pandas · HTML · Excel**
 
@@ -500,6 +562,8 @@ I read the HTML files with a `for` loop, stored each extracted table in a list, 
 
 **Python code:**
 
+<div dir="ltr" align="left">
+
 ```python
 # Extract
 
@@ -515,6 +579,8 @@ for file_name in html_files:
 combined_sales_df =pd.concat(sales_dataframes,ignore_index=True)
 ```
 
+</div>
+
 **Result:** The dataset shape was `Dataset Shape: (4862, 14)`, corresponding to 4,862 sales rows and 14 columns.
 
 **Note:** The local folder path must point to the HTML files on the machine where the notebook is run.
@@ -524,6 +590,8 @@ combined_sales_df =pd.concat(sales_dataframes,ignore_index=True)
 ### 2.1 Dataset shape, column names, and data types
 
 I checked the number of rows and columns, the column names, and their data types before applying any transformations.
+
+<div dir="ltr" align="left">
 
 ```python
 # Number of rows and columns
@@ -536,11 +604,15 @@ print("\nData Types:")
 print(combined_sales_df.dtypes)
 ```
 
+</div>
+
 **Output:** `Dataset Shape: (4862, 14)`. The `التاريخ` (date) column was read as `str`, while `سعر الوحدة` (unit price) was of type `object`.
 
 ### 2.2 Missing-value assessment
 
 I wrote a function to count missing values and calculate their percentage in each column, then ran it on the combined dataset.
+
+<div dir="ltr" align="left">
 
 ```python
 # Missing values per column
@@ -558,11 +630,15 @@ def miising_values_per_columns(data):
 miising_values_per_columns(combined_sales_df)
 ```
 
+</div>
+
 **Before cleaning:** Five values were missing from `رمز العميل` (customer ID), representing 0.103% of the rows. No dates or prices were missing at this point, before checking whether their formats were valid.
 
 ### 2.3 Duplicate-row check
 
 I used `duplicated()` to check for repeated rows.
+
+<div dir="ltr" align="left">
 
 ```python
 # Count fully duplicated rows
@@ -576,11 +652,15 @@ duplicate_records_df = combined_sales_df[
 duplicate_records_df
 ```
 
+</div>
+
 **Output:** `Duplicate Rows: 0`. The table of duplicate records was empty.
 
 ### 2.4 Detecting inconsistent date formats
 
 I tried to interpret every date using the expected **day/month/year** format. Dates that did not match that format were flagged by the test, and I displayed the original affected records.
+
+<div dir="ltr" align="left">
 
 ```python
 # 1. اكتشاف الصفوف التي تحتوي على تواريخ مختلفة
@@ -597,6 +677,8 @@ print("عدد التواريخ مختلفة التنسيق:", len(invalid_dates_
 invalid_dates_df
 ```
 
+</div>
+
 **Output: 3 dates with a different format**
 
 | Row index | Line-item ID | Original date |
@@ -610,6 +692,8 @@ These dates start with the year rather than the day. The original data was **not
 ### 2.5 Detecting prices with a different format
 
 I tested whether `سعر الوحدة` (unit price) could be converted directly to a number with `pd.to_numeric()`, then displayed the values that failed.
+
+<div dir="ltr" align="left">
 
 ```python
 # 2. اكتشاف الصفوف التي تحتوي على أسعار غير قابلة للتحويل
@@ -630,6 +714,8 @@ print("عدد الأسعار مختلفة التنسيق:", len(invalid_prices_d
 display(invalid_prices_df)
 ```
 
+</div>
+
 **Output: 4 prices with a different format**
 
 | Row index | Line-item ID | Original value |
@@ -645,6 +731,8 @@ The prices included a **currency symbol in the same cell as the number**, preven
 
 I created a temporary copy of the dataset, inserted the date and price test results into that copy, and reused the missing-value checking function.
 
+<div dir="ltr" align="left">
+
 ```python
 profiling_sales_df = combined_sales_df.copy()
 
@@ -656,6 +744,8 @@ profiling_sales_df["سعر الوحدة"] = price_check
       
 miising_values_per_columns(profiling_sales_df)
 ```
+
+</div>
 
 **Results of the temporary profiling dataset:**
 
@@ -675,6 +765,8 @@ I used `str.replace()` to remove the currency symbol, `pd.to_numeric()` to conve
 
 **Python code:**
 
+<div dir="ltr" align="left">
+
 ```python
 combined_sales_df["سعر الوحدة"] = pd.to_numeric(combined_sales_df["سعر الوحدة"]    .astype(str)
     .str.replace("ر.س", "", regex=False)
@@ -687,6 +779,8 @@ combined_sales_df["التاريخ"] = pd.to_datetime(combined_sales_df["التا
 combined_sales_df.dtypes
 ```
 
+</div>
+
 **Output:** The date column became `datetime64[us]`, and the unit-price column became `float64`.
 
 ### 3.2 Recovering missing customer IDs
@@ -694,6 +788,8 @@ combined_sales_df.dtypes
 I identified invoices with a missing customer ID, searched their other line items for the existing customer ID, and filled the missing value with the corresponding ID from the same invoice.
 
 **Python code:**
+
+<div dir="ltr" align="left">
 
 ```python
 mis =combined_sales_df[combined_sales_df["رمز العميل"].isna()]
@@ -726,11 +822,15 @@ for i in mis.index:
 combined_sales_df[combined_sales_df["رمز العميل"].isna()]
 ```
 
+</div>
+
 **Output:** No missing customer IDs remained in the resulting table.
 
 ### 3.3 Renaming columns
 
 I renamed `إجمالي السطر` (line amount) to `صافي مبيعات المنتج` (product net sales) and `سعر الوحدة` (unit price) to `سعر بيع الوحدة` (unit selling price), making the column meanings clearer.
+
+<div dir="ltr" align="left">
 
 ```python
 combined_sales_df = combined_sales_df.rename(
@@ -742,13 +842,19 @@ combined_sales_df = combined_sales_df.rename(
 combined_sales_df
 ```
 
+</div>
+
 ### 3.4 Checking missing values again
 
 I reused the same missing-value function after correcting the records, to confirm the result.
 
+<div dir="ltr" align="left">
+
 ```python
 miising_values_per_columns(combined_sales_df)
 ```
+
+</div>
 
 **Saved notebook result:** Zero missing values remained across the columns after cleaning.
 
@@ -757,6 +863,8 @@ miising_values_per_columns(combined_sales_df)
 ### 4.1 Comparing calculated and recorded net sales
 
 I calculated each product line's net sales using quantity, unit selling price, and discount percentage, then compared that amount with the recorded value. The test flagged differences **greater than SAR 0.01** and values that could not be calculated.
+
+<div dir="ltr" align="left">
 
 ```python
 # Calculate expected net sales
@@ -790,6 +898,8 @@ incorrect_sales_df[
 ]
 ```
 
+</div>
+
 **Output:** `عدد السجلات غير المتطابقة: 0` (0 mismatching records) under the condition used in the notebook. This does not rule out differences smaller than or equal to the threshold.
 
 ### 4.2 Checking business rules and duplicate item IDs
@@ -797,6 +907,8 @@ incorrect_sales_df[
 I checked for non-positive quantities, negative selling prices, negative discounts, discounts above 100%, and repeated line-item IDs.
 
 **Python code:**
+
+<div dir="ltr" align="left">
 
 ```python
 # 1. الكميات الصفرية أو السالبة
@@ -828,6 +940,8 @@ validation_report = pd.DataFrame([{
 validation_report
 ```
 
+</div>
+
 **Output:** All five checks returned **0**.
 
 **Note:** The price condition in the code is `< 0`, so it checks negative prices only, not zero prices.
@@ -835,6 +949,8 @@ validation_report
 ### 4.3 Displaying records with repeated line-item IDs
 
 I displayed all records that shared a line-item ID, if any.
+
+<div dir="ltr" align="left">
 
 ```python
 # عرض جميع السجلات التي تشترك في رقم بند
@@ -846,15 +962,21 @@ duplicate_items_df = combined_sales_df.loc[
 duplicate_items_df
 ```
 
+</div>
+
 **Output:** The table was empty. No repeated line-item IDs appeared in this check.
 
 ## 05 — Load | Exporting to Excel
 
 After cleaning the data and checking the results, I saved the consolidated dataset as an Excel file.
 
+<div dir="ltr" align="left">
+
 ```python
 combined_sales_df.to_excel("data ETL.xlsx", index=False)
 ```
+
+</div>
 
 **Output file:** `data ETL.xlsx`.
 
